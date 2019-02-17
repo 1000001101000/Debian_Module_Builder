@@ -14,4 +14,4 @@ The script extracts only the needed parts of the kernel source in an effort mimi
 
 The script only builds modules if they are missing so it's safe to run multiple times or even run automatically at boot if you want.
 
-Feel free to modify this to suit your needs. I'm open to suggestions for fixes/enhancements, but also do not plan to impliment anything more complicated than automating a proper build workflow for a custome kernel package.
+Feel free to modify this to suit your needs. I'm open to suggestions for fixes/enhancements, but also do not plan to impliment anything more complicated than automating a proper build workflow for a custom kernel package.
