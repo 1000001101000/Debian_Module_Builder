@@ -6,6 +6,7 @@ modules=""
 #opts="CONFIG_RTC_DRV_RS5C372=m CONFIG_GPIO_ICH=m"
 #modules="rtc-rs5c372 gpio-ich"
 
+num_cpu="$(cat /proc/cpuinfo | grep -e ^processor  | wc -l)"
 
 kernels="$(ls /lib/modules)"
 
@@ -19,7 +20,7 @@ do
         fi
         k_ver="$(echo $kernel | cut -d'.' -f1-2)"
         k_ver_long="$(echo $kernel | cut -d'-' -f1-2)"
-        apt-get install linux-headers-$kernel linux-source-$k_ver linux-headers-$k_ver_long-common ##> /dev/null
+        apt-get install -yq linux-headers-$kernel linux-source-$k_ver linux-headers-$k_ver_long-common ##> /dev/null
         cd /usr/src
         cp -rf linux-headers-$kernel build-temp-$kernel
         cd build-temp-$kernel
@@ -28,9 +29,11 @@ do
 	src_dir="$(dirname $src_path)"
         tar xvf ../linux-source-$k_ver.tar.xz --wildcards --strip-components=1 $src_dir/*
         src_dir="${src_dir#*/}"
-        make M="$src_dir" $opts
+        make -j $num_cpu M="$src_dir" $opts
         cp -v $src_dir/$module.ko /lib/modules/$kernel/kernel/
         insmod /lib/modules/$kernel/kernel/$module.ko
     done
+    dpkg --purge linux-source-$k_ver
+    rm -r /usr/src/build-temp-$kernel/
     depmod -a
 done
